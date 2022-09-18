@@ -11,17 +11,16 @@ set cpo&vim
 
 syn case match
 
-syn sync match saviSync grouphere NONE /\v^\s*:%(actor|class|struct|primitive|trait|new|be|fun|prop|import)>/
+syn sync match saviSync grouphere NONE /\v^\s*:%(actor|class|struct|module|enum|trait|new|be|fun|it)>/
 
-syn match   saviKwClass         /\v:(actor|class|struct|primitive|trait)/ nextgroup=@saviKeyword,@saviType2 skipwhite skipempty
+syn match   saviKwClass         /\v:(actor|class|struct|module|trait|enum)/ nextgroup=@saviKeyword,@saviType2 skipwhite skipempty
 hi def link saviKwClass         Structure
 
-syn keyword saviKwControl       if case while try recover return
-                        \       break continue error compile_intrinsic
-                        \       compile_error iftype elseiftype
+syn keyword saviKwControl       if case while try return
+                        \       break continue error! compiler intrinsic assert:
 hi def link saviKwControl       Keyword
 
-syn match   saviKwField         /\v:(prop|const|is)/
+syn match   saviKwField         /\v:(let|const|var|is)/
 hi def link saviKwField         Keyword
 
 " syn region  saviArgument        matchgroup=saviBracket start=/(/ end=/)/ contained nextgroup=saviArgument skipwhite
@@ -42,14 +41,17 @@ hi def link saviKwField         Keyword
 syn match   saviUserMethod      /\v[_a-zA-Z]\w*/ contained contains=saviErrUserMethod nextgroup=saviUserNoNMethod skipwhite
 hi def link saviUserMethod      Function
 
-syn keyword saviKwFnCapability  ref val tag iso box trn non contained nextgroup=@saviKeyword,saviUserMethod,saviUserNoNMethod skipwhite skipempty
+syn match saviKwFnCapability  /('ref|'val|'tag|'iso|'box|'trn|'non|aliased'|ref|val|tag|iso|box|trn|non)/ contained nextgroup=@saviKeyword,saviUserMethod,saviUserNoNMethod skipwhite skipempty
 hi def link saviKwFnCapability  StorageClass
 syn match   saviKwFunction      /:new/ nextgroup=saviUserMethod,saviUserNoNMethod skipwhite skipempty
 syn match   saviKwFunction      /\v:(be|fun)/ nextgroup=saviKwFnCapability,@saviKeyword,saviUserMethod skipwhite skipempty
-hi def link saviKwFunction      Keyword
+syn match   saviKwFunction      /:it/ nextgroup=saviUserMethod,saviUserNoNMethod skipwhite skipempty
+hi def link saviKwFunction      Define
 
-syn match   saviKwUse           /:import/ nextgroup=saviString,@saviKeyword,saviUserPackage skipwhite skipempty
-hi def link saviKwUse           Include
+syn match saviAssert 	/assert:/ skipwhite skipempty
+hi def link saviAssert Keyword
+
+
 
 syn match   saviErrEscape       /\\\_.\?\_s*/ contained
 hi def link saviErrEscape       Error
@@ -63,8 +65,8 @@ syn match   saviEscape          /\v\\u\x{4}/ contained
 syn match   saviEscape          /\v\\U\x{6}/ contained
 hi def link saviEscape          SpecialChar
 
-syn region  saviCharacter       matchgroup=saviCharacterX start=/\w\@<!'/ skip=/\\./ end=/'/ contains=saviEscapeSQuote,saviEscape,saviErrEscape
-hi def link saviCharacter       Character
+" syn region  saviCharacter       matchgroup=saviCharacterX start=/\w\@<!'/ skip=/\\./ end=/'/ contains=saviEscapeSQuote,saviEscape,saviErrEscape
+" hi def link saviCharacter       Character
 
 syn region  saviString          matchgroup=saviStringX start=/"/ skip=/\\./ end=/"/ contains=saviEscapeDQuote,saviEscape,saviErrEscape
 hi def link saviString          String
@@ -89,6 +91,11 @@ hi def link saviCharacterX      Character
 hi def link saviStringX         String
 hi def link saviDocumentStringX String
 
+syn match saviBoolean "\<\%(True\|False\)\>[?!]\@!"
+hi def link saviBoolean             Boolean
+
+syn match   saviType       /\v[A-Z][A-Za-z0-9\.]*/  skipwhite
+hi def link saviType       Type
 
 let &cpo = s:cpo_save
 unlet s:cpo_save
